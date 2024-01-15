@@ -3,7 +3,14 @@
 #include <ctime>
 using namespace std;
 
-void simplemap(ofstream &fout, int row, int column, int maxblock, int minblock)
+
+template <typename T>
+void Swap(T *a, T *b);
+
+template <typename T>
+void FY(T* a, int n);
+
+void simplemap(ofstream &fout, int row, int column)
 {
     // make and assignment 0
     int map[row][column];
@@ -79,7 +86,7 @@ void simplemap(ofstream &fout, int row, int column, int maxblock, int minblock)
 
 
     // making block
-    int block = (rand() % (maxblock - minblock)) + minblock;
+    int block = (rand() % 3) + 2;
     int freeCell = row * column - (row + column - 1);
     int i = 0, j = 0;
     int zero;
@@ -169,6 +176,25 @@ int main()
     cin >> minblock >> maxblock;
     if (sc == 1)
     {
-        simplemap(fout, row, column, maxblock, minblock);
+        simplemap(fout, row, column);
     }
+}
+
+template <typename T>
+void FY(T* a, int n)
+{
+    int index;
+    for (int i = n - 1; i >= 1; i--)
+    {
+        index = rand() % (i + 1);
+        Swap(&a[index], &a[i]);
+    }
+}
+
+template <typename T>
+void Swap(T *a, T *b)
+{
+    T temp = *a;
+    *a = *b;
+    *b = temp;
 }
