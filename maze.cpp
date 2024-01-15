@@ -3,6 +3,7 @@
 #include <ctime>
 using namespace std;
 
+<<<<<<< HEAD
 
 template <typename T>
 void Swap(T *a, T *b);
@@ -10,6 +11,8 @@ void Swap(T *a, T *b);
 template <typename T>
 void FY(T* a, int n);
 
+=======
+>>>>>>> 9bb7983 (some changes about blocks)
 void simplemap(ofstream &fout, int row, int column)
 {
     // make and assignment 0
