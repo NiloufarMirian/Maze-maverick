@@ -3,6 +3,12 @@
 #include <ctime>
 using namespace std;
 
+template <typename T>
+void Swap(T *a, T *b);
+
+template <typename T>
+void FY(T* a, int n);
+
 void simplemap(ofstream &fout, int row, int column)
 {
     // make and assignment 0
@@ -171,4 +177,23 @@ int main()
     {
         simplemap(fout, row, column);
     }
+}
+
+template <typename T>
+void FY(T* a, int n)
+{
+    int index;
+    for (int i = n - 1; i >= 1; i--)
+    {
+        index = rand() % (i + 1);
+        Swap(&a[index], &a[i]);
+    }
+}
+
+template <typename T>
+void Swap(T *a, T *b)
+{
+    T temp = *a;
+    *a = *b;
+    *b = temp;
 }
