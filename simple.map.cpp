@@ -136,15 +136,15 @@ void simplemap(ofstream &fout, int row, int column)
 
     fout << endl;
 
-    // print lead
-    for (int i = 0; i < row; i++)
-    {
-        for (int j = 0; j < column; j++)
-        {
-            fout << lead[i][j] << " ";
-        }
-        fout << endl;
-    }
+    // // print lead
+    // for (int i = 0; i < row; i++)
+    // {
+    //     for (int j = 0; j < column; j++)
+    //     {
+    //         fout << lead[i][j] << " ";
+    //     }
+    //     fout << endl;
+    // }
 }
 
 int main()
