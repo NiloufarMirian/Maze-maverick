@@ -119,32 +119,30 @@ void simplemap(ofstream &fout, int row, int column)
         }
     }
 
-    // // print map
-    // for (int i = 0; i < row; i++)
-    // {
-    //     for (int j = 0; j < column; j++)
-    //     {
-
-    //         if (map[i][j] < 0)
-    //             fout << " ";
-    //         else
-    //             fout << "  ";
-    //         fout << map[i][j];
-    //     }
-    //     fout << endl;
-    // }
-
-    fout << endl;
-
-    // print lead
+    // print map
     for (int i = 0; i < row; i++)
     {
         for (int j = 0; j < column; j++)
         {
-            fout << lead[i][j] << " ";
+
+            if (map[i][j] < 0)
+                fout << " ";
+            else
+                fout << "  ";
+            fout << map[i][j];
         }
         fout << endl;
     }
+
+    // // print lead
+    // for (int i = 0; i < row; i++)
+    // {
+    //     for (int j = 0; j < column; j++)
+    //     {
+    //         fout << lead[i][j] << " ";
+    //     }
+    //     fout << endl;
+    // }
 }
 
 int main()
