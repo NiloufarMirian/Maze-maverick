@@ -3,6 +3,7 @@
 #include <ctime>
 using namespace std;
 
+
 template <typename T>
 void Swap(T *a, T *b);
 
