@@ -14,6 +14,35 @@ void assignmentPath(vector<vector<char>>& lead, vector<vector<int>>& map, char m
 
 void assignmentmap(vector<vector<char>>& lead, vector<vector<int>>& map, int row, int column);
 
+void simplemap(ofstream &fout, int row, int column);
+
+
+
+int main()
+{
+    string name;
+    cout << "Enter map name" << endl;
+    cin >> name;
+    name="Maps/"+name+".txt";
+    ofstream fout;
+    fout.open(name);
+    cout << "Enter 1 for simple & 2 for complex" << endl;
+    int sc;
+    cin >> sc;
+    cout << "Enter row & column of map" << endl;
+    int row, column;
+    cin >> row >> column;
+    // cout << "Enter range of blocks";
+    // int minblock, maxblock;
+    // cin >> minblock >> maxblock;
+    if (sc == 1)
+    {
+        simplemap(fout, row, column);
+    }
+}
+
+
+
 void simplemap(ofstream &fout, int row, int column)
 {
     // make and assignment 0
@@ -76,6 +105,7 @@ void simplemap(ofstream &fout, int row, int column)
     {
         for (int j = 0; j < column; j++)
         {
+
             if (map[i][j] < 0)
                 fout << " ";
             else
@@ -84,59 +114,22 @@ void simplemap(ofstream &fout, int row, int column)
         }
         fout << endl;
     }
-
-    // print map
+    fout << endl;
+    // print lead
     for (int i = 0; i < row; i++)
     {
         for (int j = 0; j < column; j++)
         {
-
-            if (map[i][j] < 0)
-                fout << " ";
-            else
-                fout << "  ";
-            fout << map[i][j];
+            fout << lead[i][j] << " ";
         }
         fout << endl;
-    }
-    // fout << endl;
-    // // print lead
-    // for (int i = 0; i < row; i++)
-    // {
-    //     for (int j = 0; j < column; j++)
-    //     {
-    //         fout << lead[i][j] << " ";
-    //     }
-    //     fout << endl;
-    // }
-}
-
-int main()
-{
-    string name;
-    cout << "Enter map name" << endl;
-    cin >> name;
-    ofstream fout;
-    fout.open(name);
-    cout << "Enter 1 for simple & 2 for complex" << endl;
-    int sc;
-    cin >> sc;
-    cout << "Enter row & column of map" << endl;
-    int row, column;
-    cin >> row >> column;
-    // cout << "Enter range of blocks";
-    // int minblock, maxblock;
-    // cin >> minblock >> maxblock;
-    if (sc == 1)
-    {
-        simplemap(fout, row, column);
     }
 }
 
 template <typename T>
 void FY(T *a, int n)
 {
-    srand(time(NULL));
+    srand(time(0));
     int index;
     for (int i = n - 1; i >= 1; i--)
     {
@@ -161,7 +154,7 @@ void assignmentPath(vector<vector<char>>& lead, vector<vector<int>>& map, char m
     int m = 0;
     int bucket = 0;
     int sum = 0;
-    srand(time(NULL));
+    srand(time(0));
     for (int i = 0; i < moveSize; i++)
     {
         lead[n][m] = '#';
@@ -192,7 +185,7 @@ void assignmentPath(vector<vector<char>>& lead, vector<vector<int>>& map, char m
 
 void assignmentmap(vector<vector<char>>& lead, vector<vector<int>>& map, int row, int column)
 {
-    srand(time(NULL));
+    srand(time(0));
     for (int i = 0; i < row; i++)
     {
         for (int j = 0; j < column; j++)
