@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include <vector>
 using namespace std;
 
 template <typename T>
@@ -9,20 +10,26 @@ void Swap(T *a, T *b);
 template <typename T>
 void FY(T *a, int n);
 
-// void assignmentPath(char** lead, int** map, char move[], int moveSize, int row, int column);
+void assignmentPath(vector<vector<char>>& lead, vector<vector<int>>& map, char move[], int moveSize, int row, int column);
+
+void assignmentmap(vector<vector<char>>& lead, vector<vector<int>>& map, int row, int column);
 
 void simplemap(ofstream &fout, int row, int column)
 {
     // make and assignment 0
-    int map[row][column];
-    char lead[row][column];
+    vector<vector<int>> map;
+    vector<int> map1;
+    vector<vector<char>> lead;
+    vector<char> lead1;
     for (int i = 0; i < row; i++)
     {
         for (int j = 0; j < column; j++)
         {
-            map[i][j] = 0;
-            lead[i][j] = '*';
+            map1.push_back(0);
+            lead1.push_back('*');
         }
+        map.push_back(map1);
+        lead.push_back(lead1);
     }
 
     // // making path
@@ -36,46 +43,11 @@ void simplemap(ofstream &fout, int row, int column)
         move[i + row - 1] = 'R';
     }
     FY(move, row + column - 2);
-    // //assignmentPath(lead,map,move,row+column-2,row, column);
-    // row
-    int n = 0;
-    // column
-    int m = 0;
-    int moveSize = row + column - 2 ;
-    int bucket = 0;
-    int sum = 0;
-    srand(time(NULL));
-    for (int i = 0; i < moveSize; i++)
-    {
-        lead[n][m] = '#';
-        bucket = rand() % 6;
-        if (bucket <= 2)
-        {
-            bucket -= 3;
-            map[n][m] = bucket;
-        }
-        else
-        {
-            bucket -= 2;
-            map[n][m] = bucket;
-        }
-        sum += bucket;
-        if (move[i] == 'R')
-        {
-            m++;
-        }
-        else if (move[i] == 'D')
-        {
-            n++;
-        }
-    }
-    lead[n][m] = '#';
-    map[n][m] = sum;
-
-    
+    assignmentPath(lead, map, move, row + column - 2, row, column);
 
     // making block
-    int block = rand() % 3 + 2;
+    int block;
+    block = rand() % 3 + 2;
     int freeCell = row * column - (row + column - 1);
     int i = 0, j = 0;
     int zero;
@@ -97,44 +69,21 @@ void simplemap(ofstream &fout, int row, int column)
     }
 
     // ranbom assignment
+    assignmentmap(lead, map, row, column);
+
+    // print map
     for (int i = 0; i < row; i++)
     {
         for (int j = 0; j < column; j++)
         {
-            if (lead[i][j] == '*')
-            {
-                bucket = rand() % 6;
-                if (bucket <= 2)
-                {
-                    bucket -= 3;
-                    map[i][j] = bucket;
-                }
-
-                else
-                {
-                    bucket -= 2;
-                    map[i][j] = bucket;
-                }
-            }
+            if (map[i][j] < 0)
+                fout << " ";
+            else
+                fout << "  ";
+            fout << map[i][j];
         }
+        fout << endl;
     }
-
-    // // print map
-    // for (int i = 0; i < row; i++)
-    // {
-    //     for (int j = 0; j < column; j++)
-    //     {
-
-    //         if (map[i][j] < 0)
-    //             fout << " ";
-    //         else
-    //             fout << "  ";
-    //         fout << map[i][j];
-    //     }
-    //     fout << endl;
-    // }
-
-    fout << endl;
 
     // print lead
     for (int i = 0; i < row; i++)
@@ -189,39 +138,66 @@ void Swap(T *a, T *b)
     *b = temp;
 }
 
-// void assignmentPath(char** lead, int** map, char move[], int moveSize, int row, int column)
-// {
-// //row
-// int n=0;
-// //column
-// int m=0;
-// int bucket=0;
-// int sum=0;
-// srand(time(NULL));
-// for (int i=0; i<moveSize; i++)
-// {
-//     lead[n][m]='#';
-//     bucket=rand()%6;
-//     if (bucket <= 2)
-//     {
-//         bucket -= 3;
-//         map[m][n] = bucket;
-//     }
-//     else
-//     {
-//         bucket -= 2;
-//         lead[m][n] = bucket;
-//     }
-//     sum += bucket;
-//     if (move[i]=='R')
-//     {
-//         m++;
-//     }
-//     else if (move[i]=='D')
-//     {
-//         n++;
-//     }
-// }
-// lead[m][n]='#';
-// map[m][n]=sum;
-// }
+void assignmentPath(vector<vector<char>>& lead, vector<vector<int>>& map, char move[], int moveSize, int row, int column)
+{
+    // row
+    int n = 0;
+    // column
+    int m = 0;
+    int bucket = 0;
+    int sum = 0;
+    srand(time(NULL));
+    for (int i = 0; i < moveSize; i++)
+    {
+        lead[n][m] = '#';
+        bucket = rand() % 6;
+        if (bucket <= 2)
+        {
+            bucket -= 3;
+            map[n][m] = bucket;
+        }
+        else
+        {
+            bucket -= 2;
+            map[n][m] = bucket;
+        }
+        sum += bucket;
+        if (move[i] == 'R')
+        {
+            m++;
+        }
+        else if (move[i] == 'D')
+        {
+            n++;
+        }
+    }
+    lead[n][m] = '#';
+    map[n][m] = sum;
+}
+
+void assignmentmap(vector<vector<char>>& lead, vector<vector<int>>& map, int row, int column)
+{
+    srand(time(NULL));
+    for (int i = 0; i < row; i++)
+    {
+        for (int j = 0; j < column; j++)
+        {
+            if (lead[i][j] == '*')
+            {
+                int bucket;
+                bucket = rand() % 6;
+                if (bucket <= 2)
+                {
+                    bucket -= 3;
+                    map[i][j] = bucket;
+                }
+
+                else
+                {
+                    bucket -= 2;
+                    map[i][j] = bucket;
+                }
+            }
+        }
+    }
+}
