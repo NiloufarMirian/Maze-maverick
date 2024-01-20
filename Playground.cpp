@@ -17,8 +17,8 @@ int main()
     //      << "2 Import a Custom Map";
     // cin >> command;
     string name;
-    cin >> name;
-    fin.open(name);
+    // cin >> name;
+    fin.open("Maps/name.txt");
     vector<vector<int>> map;
     vector<int> row;
     string bucket;
@@ -27,11 +27,12 @@ int main()
     {
         for (int i = 0; i < bucket.size(); i++)
         {
-            if (bucket[i] != ' ')
+            if (bucket[i] != ' ' && (int(bucket[i]) == 45 
+            || (int(bucket[i]) > 47 && int(bucket[i]) < 58)))
             {
                 sub = bucket.substr(i, bucket.find(' ', i) - i);
                 row.push_back(stoi(sub));
-                i = bucket.find(' ', i);
+                i += sub.size()-1;
             }
         }
         map.push_back(row);
