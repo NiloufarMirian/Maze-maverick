@@ -5,6 +5,38 @@ using namespace std;
 
 const int ROWS = 5;
 const int COLS = 5;
+const int i1 = 0;
+const int j1 = 0;
+
+vector<char> movearray(vector<vector<char>> &moves)
+{
+    vector<char> result;
+    int i = moves.size() - 1;
+    int j = moves[0].size() - 1;
+    while (!(i == i1 && j == j1))
+    {
+        result.push_back(moves[i][j]);
+
+        switch (moves[i][j])
+        {
+        case 'L':
+            j--;
+            break;
+        case 'R':
+            j++;
+            break;
+        case 'U':
+            i--;
+            break;
+        case 'D':
+            i++;
+            break;
+        default:
+            break;
+        }
+    }
+    return result;
+}
 
 bool isValidMove(int x, int y, const vector<vector<int>> &grid)
 {
@@ -64,10 +96,13 @@ int main()
     {
         std::cout << "A path of length " << desiredLength << " exists!" << std::endl;
     }
+
     else
     {
         std::cout << "No path of length " << desiredLength << " exists." << std::endl;
     }
+
+    // print moves table
     for (int i = 0; i < ROWS; i++)
     {
         for (int j = 0; j < COLS; j++)
@@ -81,6 +116,8 @@ int main()
         }
         cout << endl;
     }
+
+    // print grid
     for (int i = 0; i < ROWS; i++)
     {
         for (int j = 0; j < COLS; j++)
@@ -94,6 +131,11 @@ int main()
         }
         cout << endl;
     }
+
+    vector<char> move= movearray(moves);
+    // print move array
+    for (int i=0; i< move.size(); i++)
+        cout << move[i]<< " ";
 
     return 0;
 }
