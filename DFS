@@ -1,0 +1,99 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+const int ROWS = 5;
+const int COLS = 5;
+
+bool isValidMove(int x, int y, const vector<vector<int>> &grid)
+{
+    return (x >= 0 && x < ROWS && y >= 0 && y < COLS && grid[x][y] == 0);
+}
+
+bool dfs(int x, int y, int length, char move, vector<vector<int>> &grid, vector<vector<char>> &moves)
+{
+    if (x == ROWS - 1 && y == COLS - 1 && length == 0)
+    {
+        moves[x][y] = move;
+        grid[x][y] = 1;
+
+        return true; // مسیر با طول دلخواه پیدا شده است
+    }
+
+    if (!isValidMove(x, y, grid))
+    {
+        return false; // حرکت غیرمجاز
+    }
+
+    grid[x][y] = 1; // نشانه‌گذاری خانه فعلی به عنوان قسمت از مسیر
+    moves[x][y] = move;
+
+    // حرکت به سمت‌های مختلف
+    if (dfs(x + 1, y, length - 1, 'U', grid, moves) || dfs(x - 1, y, length - 1, 'D', grid, moves) ||
+        dfs(x, y + 1, length - 1, 'L', grid, moves) || dfs(x, y - 1, length - 1, 'R', grid, moves))
+    {
+        return true;
+    }
+
+    grid[x][y] = 0; // بازگشت از خانه فعلی
+    return false;
+}
+
+int main()
+{
+    std::vector<std::vector<int>> grid = {
+        {0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0}};
+
+    std::vector<std::vector<char>> moves = {
+        {0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0}};
+
+    int startX = 0;
+    int startY = 0;
+    int desiredLength = 10;
+
+    if (dfs(startX, startY, desiredLength, ' ', grid, moves))
+    {
+        std::cout << "A path of length " << desiredLength << " exists!" << std::endl;
+    }
+    else
+    {
+        std::cout << "No path of length " << desiredLength << " exists." << std::endl;
+    }
+    for (int i = 0; i < ROWS; i++)
+    {
+        for (int j = 0; j < COLS; j++)
+        {
+
+            if (moves[i][j] < 0)
+                cout << " ";
+            else
+                cout << "  ";
+            cout << moves[i][j];
+        }
+        cout << endl;
+    }
+    for (int i = 0; i < ROWS; i++)
+    {
+        for (int j = 0; j < COLS; j++)
+        {
+
+            if (grid[i][j] < 0)
+                cout << " ";
+            else
+                cout << "  ";
+            cout << grid[i][j];
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
