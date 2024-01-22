@@ -24,7 +24,7 @@ bool isValidMove(int x, int y, int ROWS, int COLS, const vector<vector<int>> &ma
 
 vector<char> moveArray(vector<vector<char>> &moves);
 
-bool makeBlock(vector<vector<int>> &map, vector<vector<char>> &lead, int pathLength, int minblock, int maxblock, int row, int column)
+void makeBlock(vector<vector<int>> &map, vector<vector<char>> &lead, int pathLength, int minblock, int maxblock, int row, int column)
 {
     // making block
     int block;
@@ -54,7 +54,7 @@ int main()
 {
     string name;
     cout << "Enter map name" << endl;
-    cin >> name;
+    getline(cin, name);
     name = "Maps/" + name + ".txt";
     ofstream fout;
     fout.open(name);
@@ -172,7 +172,8 @@ void complexmap(ofstream &fout, int row, int column, int minblock, int maxblock,
     }
 
     // finding path
-    if (!dfs(0, 0, row, column, length, ' ', map, moves))
+    bool b= dfs(0, 0, row, column, length, ' ', map, moves);
+    if (!b)
     {
         cerr << "invalid path!" << endl;
         cout << "Enter length of path." << endl;
@@ -269,7 +270,12 @@ bool dfs(int x, int y, int ROWS, int COLS, int length, char move, vector<vector<
 
         return true;
     }
-
+    if (!(x == ROWS - 1 && y == COLS - 1) && length == 0)
+    {
+        return false;
+        map[x][y] = 0;
+    }
+    
     if (!isValidMove(x, y, ROWS, COLS, map))
     {
         return false;
@@ -326,7 +332,7 @@ void FY(vector<T> a)
 {
     srand(time(0));
     int index;
-    for (int i = n - 1; i >= 1; i--)
+    for (int i = a.size() - 1; i >= 1; i--)
     {
         index = rand() % (i + 1);
         Swap(&a[index], &a[i]);
