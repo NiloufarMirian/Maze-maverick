@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <ctime>
 
 using namespace std;
 
@@ -7,6 +8,34 @@ const int ROWS = 5;
 const int COLS = 5;
 const int i1 = 0;
 const int j1 = 0;
+
+void Move(int i, int j, char move)
+{
+    switch (move)
+    {
+    case 'L':
+        j--;
+        break;
+    case 'R':
+        j++;
+        break;
+    case 'U':
+        i--;
+        break;
+    case 'D':
+        i++;
+        break;
+    default:
+        break;
+    }
+}
+
+void Swap(char *a, char *b)
+{
+    char temp = *a;
+    *a = *b;
+    *b = temp;
+}
 
 vector<char> movearray(vector<vector<char>> &moves)
 {
@@ -38,9 +67,103 @@ vector<char> movearray(vector<vector<char>> &moves)
     return result;
 }
 
+bool isValidMove(int i, int j, const vector<vector<char>> lead, char move)
+{
+    switch (move)
+    {
+    case 'L':
+        j--;
+        break;
+    case 'R':
+        j++;
+        break;
+    case 'U':
+        i--;
+        break;
+    case 'D':
+        i++;
+        break;
+    default:
+        break;
+    }
+
+    return (j >= 0 && j < ROWS && i >= 0 && i < COLS && lead[i][j] == '*');
+}
+
 bool isValidMove(int x, int y, const vector<vector<int>> &grid)
 {
     return (x >= 0 && x < ROWS && y >= 0 && y < COLS && grid[x][y] == 0);
+}
+
+void FY(vector<char> &move, int i, int j, vector<vector<char>> lead)
+{
+    srand(time(0));
+    int index;
+    for (int k = 0; k < move.size(); k++)
+    {
+        index = i + rand() % (move.size() - i);
+        if (isValidMove(i, j, lead, move[index]))
+        {
+            Swap(&move[index], &move[k]);
+        }
+        if (!(isValidMove(i, j, lead, move[k])))
+        {
+            index = i + rand() % (move.size() - i);
+            if (isValidMove(i, j, lead, move[index]))
+            {
+                Swap(&move[index], &move[k]);
+            }
+        }
+        Move(i, j, move[k]);
+        lead[i][j] = '#';
+    }
+}
+
+void assignmentPath(vector<vector<char>> &lead, vector<vector<int>> &map, vector<char> move, int row, int column)
+{
+    // row
+    int n = 0;
+    // column
+    int m = 0;
+    int bucket = 0;
+    int sum = 0;
+    int len = move.size();
+    srand(time(0));
+    for (int i = 0; i < len; i++)
+    {
+        lead[n][m] = '#';
+        bucket = rand() % 6;
+        if (bucket <= 2)
+        {
+            bucket -= 3;
+            map[n][m] = bucket;
+        }
+        else
+        {
+            bucket -= 2;
+            map[n][m] = bucket;
+        }
+        sum += bucket;
+        switch (move[len - i - 1])
+        {
+        case 'L':
+            m++;
+            break;
+        case 'R':
+            m--;
+            break;
+        case 'U':
+            n++;
+            break;
+        case 'D':
+            n--;
+            break;
+        default:
+            break;
+        }
+    }
+    lead[n][m] = '#';
+    map[n][m] = sum;
 }
 
 bool dfs(int x, int y, int length, char move, vector<vector<int>> &grid, vector<vector<char>> &moves)
@@ -50,15 +173,15 @@ bool dfs(int x, int y, int length, char move, vector<vector<int>> &grid, vector<
         moves[x][y] = move;
         grid[x][y] = 1;
 
-        return true; // مسیر با طول دلخواه پیدا شده است
+        return true; 
     }
 
     if (!isValidMove(x, y, grid))
     {
-        return false; // حرکت غیرمجاز
+        return false; 
     }
 
-    grid[x][y] = 1; // نشانه‌گذاری خانه فعلی به عنوان قسمت از مسیر
+    grid[x][y] = 1; 
     moves[x][y] = move;
 
     // حرکت به سمت‌های مختلف
@@ -74,14 +197,21 @@ bool dfs(int x, int y, int length, char move, vector<vector<int>> &grid, vector<
 
 int main()
 {
-    std::vector<std::vector<int>> grid = {
+    vector<vector<int>> grid = {
         {0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0}};
 
-    std::vector<std::vector<char>> moves = {
+    vector<vector<char>> moves = {
+        {0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0}};
+
+    vector<vector<char>> lead = {
         {0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0},
@@ -94,12 +224,12 @@ int main()
 
     if (dfs(startX, startY, desiredLength, ' ', grid, moves))
     {
-        std::cout << "A path of length " << desiredLength << " exists!" << std::endl;
+        cout << "A path of length " << desiredLength << " exists!" << std::endl;
     }
 
     else
     {
-        std::cout << "No path of length " << desiredLength << " exists." << std::endl;
+        cout << "No path of length " << desiredLength << " exists." << std::endl;
     }
 
     // print moves table
@@ -132,10 +262,52 @@ int main()
         cout << endl;
     }
 
-    vector<char> move= movearray(moves);
+    vector<char> move = movearray(moves);
     // print move array
-    for (int i=0; i< move.size(); i++)
-        cout << move[i]<< " ";
+    for (int i = 0; i < move.size(); i++)
+        cout << move[i] << " ";
+
+    // reset ghanges
+    for (int i = 0; i < ROWS; i++)
+    {
+        for (int j = 0; j < COLS; j++)
+        {
+            grid[i][j] = 0;
+            lead[i][j] = '*';
+        }
+    }
+    FY(move, ROWS - 1, COLS - 1, lead);
+
+    cout << endl;
+    // print move array
+    for (int i = 0; i < move.size(); i++)
+        cout << move[i] << " ";
+    cout << endl;
+
+    assignmentPath(lead, grid, move, ROWS, COLS);
+    // print lead
+    for (int i = 0; i < ROWS; i++)
+    {
+        for (int j = 0; j < COLS; j++)
+        {
+            cout << lead[i][j] << " ";
+        }
+        cout << endl;
+    }
+    // print grid
+    for (int i = 0; i < ROWS; i++)
+    {
+        for (int j = 0; j < COLS; j++)
+        {
+
+            if (grid[i][j] < 0)
+                cout << " ";
+            else
+                cout << "  ";
+            cout << grid[i][j];
+        }
+        cout << endl;
+    }
 
     return 0;
 }
