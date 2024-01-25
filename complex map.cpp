@@ -2,6 +2,7 @@
 #include <fstream>
 #include <ctime>
 #include <vector>
+#include <stdlib.h>
 using namespace std;
 
 template <typename T>
@@ -10,7 +11,7 @@ void Swap(T *a, T *b);
 template <typename T>
 void FY(vector<T> a);
 
-void assignmentPath(vector<vector<char>> &lead, vector<vector<int>> &map, vector<char> move, int row, int column);
+void assignmentPath(vector<vector<char>> &lead, vector<vector<int>> &map, vector<char> move, int row, int column, int minValue, int maxValue);
 
 void assignmentMap(vector<vector<char>> &lead, vector<vector<int>> &map, int row, int column, int minValue, int maxValue);
 
@@ -23,6 +24,85 @@ bool dfs(int x, int y, int ROWS, int COLS, int length, char move, vector<vector<
 bool isValidMove(int x, int y, int ROWS, int COLS, const vector<vector<int>> &map);
 
 vector<char> moveArray(vector<vector<char>> &moves);
+
+void makeBlock(vector<vector<int>> &map, vector<vector<char>> &lead, int pathLength, int minblock, int maxblock, int row, int column);
+
+int main()
+{
+    int command;
+    cout << "1. Create a New Map\n"
+         << "2. Playground\n"
+         << "3. Solve a Maze\n"
+         << "4. History\n"
+         << "5. Leaderboard\n"
+         << "6. Exit\n";
+    cin >> command;
+    system("cls");
+    if (command == 1)
+    {
+        string name;
+        cout << "Enter name" << endl;
+        getline(cin, name);
+        name = "Maps/" + name + ".txt";
+        ofstream fout;
+        fout.open(name);
+        fout << name+".txt\n";
+
+        cout << "- 1.1 Easy\n"
+             << "- 1.2 Hard\n";
+        cin >> command;
+        cout << "Enter row & column of map" << endl;
+        if (command == 1)
+        {
+            int row, column;
+            cin >> row >> column;
+            fout << "Easy\n";
+            fout << row+column-2 << "\n";
+            simplemap(fout, row, column);
+        }
+        if (command == 2)
+        {
+            int row, column;
+            cin >> row >> column;
+            cout << "Enter range of blocks" << endl;
+            int minblock, maxblock;
+            cin >> minblock >> maxblock;
+            //exeption handling
+            if (minblock > maxblock)
+                swap(minblock, maxblock);
+
+            if (minblock < 0 || maxblock < 0)
+            {
+                cerr << "invalid value!" << endl;
+                cout << "Enter range of blocks" << endl;
+                cin >> minblock >> maxblock;
+            }
+
+            cout << "Enter range of values of cells." << endl;
+            int minValue, maxValue;
+            cin >> minValue >> maxValue;
+            //exeption handling
+            if (minValue > maxValue)
+                swap(minValue, maxValue);
+
+            cout << "Enter length of path." << endl;
+            int length;
+            cin >> length;
+            fout << "Hard\n";
+            fout << length << "\n";
+            complexmap(fout, row, column, minblock, maxblock, minValue, maxValue, length);
+        }
+    }
+    system("cls");
+    if (command == 2)
+    {
+        cout << "- 2.1 Choose from Existing Maps\n"
+             << "- 2.2 Import a Custom Map\n";
+    }
+
+    cout << "- 3.1 Choose from Existing Maps\n"
+         << "- 3.2 Import a Custom Map\n";
+}
 
 void makeBlock(vector<vector<int>> &map, vector<vector<char>> &lead, int pathLength, int minblock, int maxblock, int row, int column)
 {
@@ -47,41 +127,6 @@ void makeBlock(vector<vector<int>> &map, vector<vector<char>> &lead, int pathLen
         }
         lead[i][j] = '#';
         freeCell--;
-    }
-}
-
-int main()
-{
-    string name;
-    cout << "Enter map name" << endl;
-    getline(cin, name);
-    name = "Maps/" + name + ".txt";
-    ofstream fout;
-    fout.open(name);
-    cout << "Enter 1 for simple & 2 for complex" << endl;
-    int sc;
-    cin >> sc;
-    cout << "Enter row & column of map" << endl;
-    if (sc == 1)
-    {
-        int row, column;
-        cin >> row >> column;
-        simplemap(fout, row, column);
-    }
-    if (sc == 2)
-    {
-        int row, column;
-        cin >> row >> column;
-        cout << "Enter range of blocks" << endl;
-        int minblock, maxblock;
-        cin >> minblock >> maxblock;
-        cout << "Enter range of values of cells." << endl;
-        int minValue, maxValue;
-        cin >> minValue >> maxValue;
-        cout << "Enter length of path." << endl;
-        int length;
-        cin >> length;
-        complexmap(fout, row, column, minblock, maxblock, minValue, maxValue, length);
     }
 }
 
@@ -114,7 +159,7 @@ void simplemap(ofstream &fout, int row, int column)
         move.push_back('R');
     }
     FY(move);
-    assignmentPath(lead, map, move, row, column);
+    assignmentPath(lead, map, move, row, column, -3, 3);
 
     // making block
     makeBlock(map, lead, row + column - 2, 2, 5, row, column);
@@ -172,8 +217,7 @@ void complexmap(ofstream &fout, int row, int column, int minblock, int maxblock,
     }
 
     // finding path
-    bool b= dfs(0, 0, row, column, length, ' ', map, moves);
-    if (!b)
+    if (!dfs(0, 0, row, column, length, ' ', map, moves))
     {
         cerr << "invalid path!" << endl;
         cout << "Enter length of path." << endl;
@@ -196,7 +240,7 @@ void complexmap(ofstream &fout, int row, int column, int minblock, int maxblock,
     }
 
     // assignment map & lead
-    assignmentPath(lead, map, move, row, column);
+    assignmentPath(lead, map, move, row, column, minValue, maxValue);
 
     // making blocks
     makeBlock(map, lead, length, minblock, maxblock, row, column);
@@ -228,7 +272,6 @@ void complexmap(ofstream &fout, int row, int column, int minblock, int maxblock,
         }
         fout << endl;
     }
-
 }
 
 vector<char> moveArray(vector<vector<char>> &moves)
@@ -275,7 +318,7 @@ bool dfs(int x, int y, int ROWS, int COLS, int length, char move, vector<vector<
         return false;
         map[x][y] = 0;
     }
-    
+
     if (!isValidMove(x, y, ROWS, COLS, map))
     {
         return false;
@@ -322,6 +365,60 @@ bool dfs(int x, int y, int ROWS, int COLS, int length, char move, vector<vector<
     return false;
 }
 
+bool dfsS(int x, int y, int ROWS, int COLS, int sum, int move, vector<vector<int>> map, vector<vector<char>> &moves)
+{
+    if (x == ROWS - 1 && y == COLS - 1 && sum == 0)
+    {
+        moves[x][y] = move;
+        return true;
+    }
+
+    if (!isValidMove(x, y, ROWS, COLS, map))
+    {
+        return false;
+    }
+
+    sum -= map[x][y];
+    moves[x][y] = move;
+
+    srand(time(0));
+    int random = rand() % 4;
+    switch (random)
+    {
+    case 0:
+        if (dfs(x + 1, y, ROWS, COLS, sum, 'U', map, moves) || dfs(x - 1, y, ROWS, COLS, sum, 'D', map, moves) ||
+            dfs(x, y + 1, ROWS, COLS, sum, 'L', map, moves) || dfs(x, y - 1, ROWS, COLS, sum, 'R', map, moves))
+        {
+            return true;
+        }
+        break;
+    case 1:
+        if (dfs(x, y + 1, ROWS, COLS, sum, 'L', map, moves) || dfs(x, y - 1, ROWS, COLS, sum, 'R', map, moves) ||
+            dfs(x + 1, y, ROWS, COLS, sum, 'U', map, moves) || dfs(x - 1, y, ROWS, COLS, sum, 'D', map, moves))
+        {
+            return true;
+        }
+        break;
+    case 2:
+        if (dfs(x, y - 1, ROWS, COLS, sum, 'R', map, moves) || dfs(x, y + 1, ROWS, COLS, sum, 'L', map, moves) ||
+            dfs(x - 1, y, ROWS, COLS, sum, 'D', map, moves) || dfs(x + 1, y, ROWS, COLS, sum, 'U', map, moves))
+        {
+            return true;
+        }
+        break;
+    case 3:
+        if (dfs(x - 1, y, ROWS, COLS, sum, 'D', map, moves) || dfs(x, y - 1, ROWS, COLS, sum, 'R', map, moves) ||
+            dfs(x, y + 1, ROWS, COLS, sum, 'L', map, moves) || dfs(x + 1, y, ROWS, COLS, sum, 'U', map, moves))
+        {
+            return true;
+        }
+        break;
+    }
+
+    moves[x][y] = ' ';
+    return false;
+}
+
 bool isValidMove(int x, int y, int ROWS, int COLS, const vector<vector<int>> &map)
 {
     return (x >= 0 && x < ROWS && y >= 0 && y < COLS && map[x][y] == 0);
@@ -347,7 +444,7 @@ void Swap(T *a, T *b)
     *b = temp;
 }
 
-void assignmentPath(vector<vector<char>> &lead, vector<vector<int>> &map, vector<char> move, int row, int column)
+void assignmentPath(vector<vector<char>> &lead, vector<vector<int>> &map, vector<char> move, int row, int column, int minValue, int maxValue)
 {
     // row
     int n = 0;
@@ -361,14 +458,25 @@ void assignmentPath(vector<vector<char>> &lead, vector<vector<int>> &map, vector
     {
         lead[n][m] = '#';
         bucket = rand() % 6;
-        if (bucket <= 2)
+        int bucket;
+        if (minValue < 0 && maxValue > 0)
         {
-            bucket -= 3;
-            map[n][m] = bucket;
+            bucket = rand() % (maxValue - minValue);
+            if (bucket <= (-1 * minValue - 1))
+            {
+                bucket += minValue;
+                map[n][m] = bucket;
+            }
+
+            else
+            {
+                bucket += (minValue + 1);
+                map[n][m] = bucket;
+            }
         }
         else
         {
-            bucket -= 2;
+            bucket = rand() % (maxValue - minValue) + minValue;
             map[n][m] = bucket;
         }
         sum += bucket;
@@ -419,9 +527,9 @@ void assignmentMap(vector<vector<char>> &lead, vector<vector<int>> &map, int row
                         map[i][j] = bucket;
                     }
                 }
-                else 
+                else
                 {
-                    bucket = rand() % (maxValue - minValue)+minValue;
+                    bucket = rand() % (maxValue - minValue) + minValue;
                     map[i][j] = bucket;
                 }
             }
