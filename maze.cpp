@@ -228,10 +228,6 @@ int main()
             ifstream fin;
             fin.open("Maps/" + name);
             getline(fin, name);
-            string level;
-            fin >> level;
-            int pathLength;
-            fin >> pathLength;
             solveMaze(fin);
 
         }
@@ -242,10 +238,7 @@ int main()
             ifstream fin;
             fin.open(name);
             getline(fin, name);
-            string level;
-            fin >> level;
-            int pathLength;
-            fin >> pathLength;
+            
             solveMaze(fin);
         }
         else 
@@ -516,57 +509,42 @@ bool dfs(int x, int y, int ROWS, int COLS, int length, char move, vector<vector<
     return false;
 }
 
-bool dfsS(int x, int y, int ROWS, int COLS, int sum, int move, vector<vector<int>> map, vector<vector<char>> &moves)
+bool dfsS(int x, int y, int ROWS, int COLS, int sum, int length, char move, vector<vector<int>> map, vector<vector<char>> &moves, vector<vector<char>> &lead)
 {
-    if (x == ROWS - 1 && y == COLS - 1 && sum == 0)
+    if (x == ROWS - 1 && y == COLS - 1 && sum == 0 && length == 0)
     {
+        lead[x][y] = '#';
         moves[x][y] = move;
         return true;
     }
 
-    if (!isValidMove(x, y, ROWS, COLS, map))
+    if (!(x == ROWS - 1 && y == COLS - 1) && length == 0)
     {
         return false;
     }
 
-    sum -= map[x][y];
-    moves[x][y] = move;
-
-    srand(time(0));
-    int random = rand() % 4;
-    switch (random)
+    if (x == ROWS - 1 && y == COLS - 1 && sum != 0 && length == 0)
     {
-    case 0:
-        if (dfs(x + 1, y, ROWS, COLS, sum, 'U', map, moves) || dfs(x - 1, y, ROWS, COLS, sum, 'D', map, moves) ||
-            dfs(x, y + 1, ROWS, COLS, sum, 'L', map, moves) || dfs(x, y - 1, ROWS, COLS, sum, 'R', map, moves))
-        {
-            return true;
-        }
-        break;
-    case 1:
-        if (dfs(x, y + 1, ROWS, COLS, sum, 'L', map, moves) || dfs(x, y - 1, ROWS, COLS, sum, 'R', map, moves) ||
-            dfs(x + 1, y, ROWS, COLS, sum, 'U', map, moves) || dfs(x - 1, y, ROWS, COLS, sum, 'D', map, moves))
-        {
-            return true;
-        }
-        break;
-    case 2:
-        if (dfs(x, y - 1, ROWS, COLS, sum, 'R', map, moves) || dfs(x, y + 1, ROWS, COLS, sum, 'L', map, moves) ||
-            dfs(x - 1, y, ROWS, COLS, sum, 'D', map, moves) || dfs(x + 1, y, ROWS, COLS, sum, 'U', map, moves))
-        {
-            return true;
-        }
-        break;
-    case 3:
-        if (dfs(x - 1, y, ROWS, COLS, sum, 'D', map, moves) || dfs(x, y - 1, ROWS, COLS, sum, 'R', map, moves) ||
-            dfs(x, y + 1, ROWS, COLS, sum, 'L', map, moves) || dfs(x + 1, y, ROWS, COLS, sum, 'U', map, moves))
-        {
-            return true;
-        }
-        break;
+        return false;
     }
 
-    moves[x][y] = ' ';
+    if (!isValidMove(x, y, ROWS, COLS, lead))
+    {
+        return false;
+    }
+    sum -= map[x][y];
+    moves[x][y] = move;
+    lead[x][y] = '#';
+
+    if (dfsS(x - 1, y, ROWS, COLS, sum, length - 1, 'D', map, moves, lead) ||
+        dfsS(x, y - 1, ROWS, COLS, sum, length - 1, 'R', map, moves, lead) ||
+        dfsS(x, y + 1, ROWS, COLS, sum, length - 1, 'L', map, moves, lead) ||
+        dfsS(x + 1, y, ROWS, COLS, sum, length - 1, 'U', map, moves, lead))
+    {
+        return true;
+    }
+
+    lead[x][y] = '*';
     return false;
 }
 
@@ -855,6 +833,10 @@ bool isValidMove(int x, int y, int ROWS, int COLS, vector<vector<char>> lead)
 
 void solveMaze(ifstream &fin)
 {
+    string level;
+    fin >> level;
+    int pathLength;
+    fin >> pathLength;
     vector<vector<int>> map;
     vector<vector<char>> lead;
     vector<vector<char>> moves;
@@ -975,5 +957,9 @@ void solveMaze(ifstream &fin)
             }
             cout << endl;
         }
+    }
+    else
+    {
+        cout << "Not oath found!";
     }
 }
