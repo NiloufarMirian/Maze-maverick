@@ -2,8 +2,42 @@
 #include <fstream>
 #include <ctime>
 #include <vector>
+#include <windows.h>
+#include <string>
+#include <algorithm>
 #include <stdlib.h>
+#include <conio.h>
+#include <chrono>
+#include <thread>
+
 using namespace std;
+
+
+//chronometer
+class Stopwatch {
+public:
+    void start() {
+        startTime = std::chrono::high_resolution_clock::now();
+    }
+
+    void stop() {
+        endTime = std::chrono::high_resolution_clock::now();
+    }
+
+    void reset() {
+        startTime = std::chrono::time_point<std::chrono::high_resolution_clock>();
+        endTime = std::chrono::time_point<std::chrono::high_resolution_clock>();
+    }
+
+    double elapsedMilliseconds() const {
+        return std::chrono::duration<double, std::milli>(endTime - startTime).count();
+    }
+
+private:
+    std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
+    std::chrono::time_point<std::chrono::high_resolution_clock> endTime;
+};
+
 
 template <typename T>
 void Swap(T *a, T *b);
@@ -23,9 +57,16 @@ bool dfs(int x, int y, int ROWS, int COLS, int length, char move, vector<vector<
 
 bool isValidMove(int x, int y, int ROWS, int COLS, const vector<vector<int>> &map);
 
+bool isValidMove(int x, int y, int ROWS, int COLS, vector<vector<char>> lead);
+
 vector<char> moveArray(vector<vector<char>> &moves);
 
 void makeBlock(vector<vector<int>> &map, vector<vector<char>> &lead, int pathLength, int minblock, int maxblock, int row, int column);
+
+void Playground(ifstream &fin);
+
+void printmap(vector<vector<int>> map, vector<vector<char>> lead);
+
 
 int main()
 {
@@ -46,7 +87,7 @@ int main()
         name = "Maps/" + name + ".txt";
         ofstream fout;
         fout.open(name);
-        fout << name+".txt\n";
+        fout << name + ".txt\n";
 
         cout << "- 1.1 Easy\n"
              << "- 1.2 Hard\n";
@@ -57,7 +98,7 @@ int main()
             int row, column;
             cin >> row >> column;
             fout << "Easy\n";
-            fout << row+column-2 << "\n";
+            fout << row + column - 2 << "\n";
             simplemap(fout, row, column);
         }
         if (command == 2)
@@ -67,7 +108,7 @@ int main()
             cout << "Enter range of blocks" << endl;
             int minblock, maxblock;
             cin >> minblock >> maxblock;
-            //exeption handling
+            // exeption handling
             if (minblock > maxblock)
                 swap(minblock, maxblock);
 
@@ -81,7 +122,7 @@ int main()
             cout << "Enter range of values of cells." << endl;
             int minValue, maxValue;
             cin >> minValue >> maxValue;
-            //exeption handling
+            // exeption handling
             if (minValue > maxValue)
                 swap(minValue, maxValue);
 
@@ -93,11 +134,23 @@ int main()
             complexmap(fout, row, column, minblock, maxblock, minValue, maxValue, length);
         }
     }
+
     else if (command == 2)
     {
         system("cls");
+        int command;
         cout << "- 2.1 Choose from Existing Maps\n"
              << "- 2.2 Import a Custom Map\n";
+        string name;
+        // temporary address
+        ifstream fin;
+        fin.open("Maps/complex.txt");
+        getline(fin, name);
+        string level;
+        fin >> level;
+        int pathLength;
+        fin >> pathLength;
+        Playground(fin);
     }
 
     else if (command == 3)
@@ -538,4 +591,169 @@ void assignmentMap(vector<vector<char>> &lead, vector<vector<int>> &map, int row
             }
         }
     }
+}
+
+void Playground(ifstream &fin)
+{
+    vector<vector<int>> map;
+    vector<vector<char>> lead;
+    string bucket;
+    string sub;
+    while (getline(fin, bucket))
+    {
+        vector<int> row;
+        vector<char> lead1;
+        for (int i = 0; i < bucket.size(); i++)
+        {
+            if (bucket[i] != ' ' && (int(bucket[i]) == 45 || (int(bucket[i]) > 47 && int(bucket[i]) < 58)))
+            {
+                sub = bucket.substr(i, bucket.find(' ', i) - i);
+                row.push_back(stoi(sub));
+                if (stoi(sub) != 0)
+                    lead1.push_back('*');
+                else
+                    lead1.push_back('#');
+
+                i += sub.size() - 1;
+            }
+        }
+        if (!row.empty())
+        {
+            map.push_back(row);
+            lead.push_back(lead1);
+        }
+    }
+    int i = 0;
+    int j = 0;
+    lead[i][j] = '#';
+    int sum = 0;
+    sum += map[i][j];
+    printmap(map, lead);
+    Stopwatch stopwatch;
+    stopwatch.start();
+
+    char ch;
+    while (1)
+    {
+        if (_kbhit())
+        {
+            ch = _getch();
+            switch (ch)
+            {
+            case 72: // Up
+                if (isValidMove(i - 1, j, map.size(), map[0].size(), lead))
+                {
+                    i--;
+                    lead[i][j] = '#';
+                    if (i == map.size() - 1 && j == map[0].size() - 1 && sum == map[i][j])
+                    {
+                        cout << "You won!\n";
+                        stopwatch.stop();
+                        cout << "Spent time: " << stopwatch.elapsedMilliseconds() / 1000 << " seconds" << std::endl;
+
+                        return;
+                    }
+                    sum += map[i][j];
+                    printmap(map, lead);
+                }
+                else
+                    cout << "Invalid move!";
+                break;
+            case 80: // Down
+                if (isValidMove(i + 1, j, map.size(), map[0].size(), lead))
+                {
+                    i++;
+                    lead[i][j] = '#';
+                    if (i == map.size() - 1 && j == map[0].size() - 1 && sum == map[i][j])
+                    {
+                        cout << "You won!\n";
+                        stopwatch.stop();
+                        cout << "Spent time: " << stopwatch.elapsedMilliseconds() / 1000 << " seconds" << std::endl;
+
+                        return;
+                    }
+                    sum += map[i][j];
+                    printmap(map, lead);
+                }
+                else
+                    cout << "Invalid move!";
+                break;
+            case 75: // Left
+                if (isValidMove(i, j - 1, map.size(), map[0].size(), lead))
+                {
+                    j--;
+                    lead[i][j] = '#';
+                    if (i == map.size() - 1 && j == map[0].size() - 1 && sum == map[i][j])
+                    {
+                        cout << "You won!\n";
+                        stopwatch.stop();
+                        cout << "Spent time: " << stopwatch.elapsedMilliseconds() / 1000 << " seconds" << std::endl;
+                        return;
+                    }
+                    sum += map[i][j];
+                    printmap(map, lead);
+                }
+                else
+                    cout << "Invalid move!";
+                break;
+            case 77: // Right
+                if (isValidMove(i, j + 1, map.size(), map[0].size(), lead))
+                {
+                    j++;
+                    lead[i][j] = '#';
+                    if (i == map.size() - 1 && j == map[0].size() - 1 && sum == map[i][j])
+                    {
+                        cout << "You won!\n";
+                        stopwatch.stop();
+                        cout << "Spent time: " << stopwatch.elapsedMilliseconds() / 1000 << " seconds" << std::endl;
+
+                        return;
+                    }
+                    sum += map[i][j];
+                    printmap(map, lead);
+                }
+                else
+                    cout << "Invalid move!";
+                break;
+            case 13: // enter
+                return;
+            }
+        }
+    }
+}
+
+void printmap(vector<vector<int>> map, vector<vector<char>> lead)
+{
+    system("cls");
+    // print map
+    for (int i = 0; i < map.size(); i++)
+    {
+        for (int j = 0; j < map[0].size(); j++)
+        {
+            if (lead[i][j] == '#' && map[i][j] != 0)
+            {
+                if (map[i][j] < 0)
+
+                    cout << "\033[1;31m " << map[i][j] << "\033[0m";
+
+                else
+                    cout << "\033[1;31m  " << map[i][j] << "\033[0m";
+            }
+            else
+            {
+                if (map[i][j] < 0)
+                    cout << " ";
+                else
+                    cout << "  ";
+                cout << map[i][j];
+            }
+        }
+
+        cout << endl;
+    }
+}
+
+bool isValidMove(int x, int y, int ROWS, int COLS, vector<vector<char>> lead)
+{
+    return (x >= 0 && x < ROWS && y >= 0 && y < COLS && lead[x][y] != '#');
 }
