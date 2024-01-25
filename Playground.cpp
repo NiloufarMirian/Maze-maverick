@@ -24,12 +24,12 @@ int main()
     // cin >> name;
     fin.open("Maps/complex.txt");
     // fin information
-    getline (fin, name);
+    getline(fin, name);
     string level;
     fin >> level;
     int pathLength;
     fin >> pathLength;
-    //fin map
+    // fin map
     vector<vector<int>> map;
     vector<vector<char>> lead;
     string bucket;
@@ -60,8 +60,10 @@ int main()
     }
     int i = 0;
     int j = 0;
-    lead[i][j]='#';
-    printmap(map , lead);
+    lead[i][j] = '#';
+    int sum=0;
+    sum += map[i][j];
+    printmap(map, lead);
 
     char ch;
     while (1)
@@ -71,50 +73,75 @@ int main()
             ch = _getch();
             switch (ch)
             {
-            case 72: //Up
-                if (isValidMove(i-1, j , map.size(), map[0].size(), lead))
+            case 72: // Up
+                if (isValidMove(i - 1, j, map.size(), map[0].size(), lead))
                 {
                     i--;
-                    lead[i][j]='#';
-                    printmap(map , lead);
+                    lead[i][j] = '#';
+                    if (i==map.size()-1 && j==map[0].size()-1 && sum==map[i][j])
+                    {
+                        cout << "You won!";
+                        return 0;
+                    }
+                    sum += map[i][j];
+                    printmap(map, lead);
                 }
-                else  
+                else
                     cout << "Invalid move!";
                 break;
             case 80: // Down
-                if (isValidMove(i+1, j , map.size(), map[0].size(), lead))
+                if (isValidMove(i + 1, j, map.size(), map[0].size(), lead))
                 {
                     i++;
-                    lead[i][j]='#';
-                    printmap(map , lead);
+                    lead[i][j] = '#';
+                    if (i==map.size()-1 && j==map[0].size()-1 && sum==map[i][j])
+                    {
+                        cout << "You won!";
+                        return 0;
+                    }
+                    sum += map[i][j];
+                    printmap(map, lead);
                 }
-                else  
+                else
                     cout << "Invalid move!";
                 break;
             case 75: // Left
-                if (isValidMove(i, j-1 , map.size(), map[0].size(), lead))
+                if (isValidMove(i, j - 1, map.size(), map[0].size(), lead))
                 {
                     j--;
-                    lead[i][j]='#';
-                    printmap(map , lead);
+                    lead[i][j] = '#';
+                    if (i==map.size()-1 && j==map[0].size()-1 && sum==map[i][j])
+                    {
+                        cout << "You won!";
+                        return 0;
+                    }
+                    sum += map[i][j];
+                    printmap(map, lead);
                 }
-                else  
+                else
                     cout << "Invalid move!";
                 break;
             case 77: // Right
-                if (isValidMove(i, j+1 , map.size(), map[0].size(), lead))
+                if (isValidMove(i, j + 1, map.size(), map[0].size(), lead))
                 {
                     j++;
-                    lead[i][j]='#';
-                    printmap(map , lead);
+                    lead[i][j] = '#';
+                    if (i==map.size()-1 && j==map[0].size()-1 && sum==map[i][j])
+                    {
+                        cout << "You won!";
+                        return 0;
+                    }
+                    sum += map[i][j];
+                    printmap(map, lead);
                 }
-                else  
+                else
                     cout << "Invalid move!";
                 break;
             case 13: // enter
                 return 0;
-
             }
+            
+
         }
     }
 }
@@ -154,3 +181,4 @@ bool isValidMove(int x, int y, int ROWS, int COLS, vector<vector<char>> lead)
 {
     return (x >= 0 && x < ROWS && y >= 0 && y < COLS && lead[x][y] != '#');
 }
+
