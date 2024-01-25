@@ -37,9 +37,9 @@ int main()
          << "5. Leaderboard\n"
          << "6. Exit\n";
     cin >> command;
-    system("cls");
     if (command == 1)
     {
+        system("cls");
         string name;
         cout << "Enter name" << endl;
         getline(cin, name);
@@ -93,15 +93,18 @@ int main()
             complexmap(fout, row, column, minblock, maxblock, minValue, maxValue, length);
         }
     }
-    system("cls");
-    if (command == 2)
+    else if (command == 2)
     {
+        system("cls");
         cout << "- 2.1 Choose from Existing Maps\n"
              << "- 2.2 Import a Custom Map\n";
     }
 
-    cout << "- 3.1 Choose from Existing Maps\n"
-         << "- 3.2 Import a Custom Map\n";
+    else if (command == 3)
+    {
+        cout << "- 3.1 Choose from Existing Maps\n"
+             << "- 3.2 Import a Custom Map\n";
+    }
 }
 
 void makeBlock(vector<vector<int>> &map, vector<vector<char>> &lead, int pathLength, int minblock, int maxblock, int row, int column)
