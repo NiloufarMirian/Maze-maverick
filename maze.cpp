@@ -190,7 +190,7 @@ int main()
             fin >> pathLength;
             Playground(fin);
         }
-        else 
+        else
         {
             cerr << "Invalid command!\n";
         }
@@ -229,7 +229,6 @@ int main()
             fin.open("Maps/" + name);
             getline(fin, name);
             solveMaze(fin);
-
         }
         else if (command == 2)
         {
@@ -238,10 +237,10 @@ int main()
             ifstream fin;
             fin.open(name);
             getline(fin, name);
-            
+
             solveMaze(fin);
         }
-        else 
+        else
         {
             cerr << "Invalid command!\n";
         }
@@ -724,6 +723,15 @@ void Playground(ifstream &fin)
                         stopwatch.stop();
                         cout << "Spent time: " << stopwatch.elapsedMilliseconds() / 1000 << " seconds" << std::endl;
 
+                        //date
+                        time_t now = time(0);
+                        tm *ltm = localtime(&now);
+
+                        // print various components of tm structure.
+                        cout << "Year:" << 1900 + ltm->tm_year << endl;
+                        cout << "Month: " << 1 + ltm->tm_mon << endl;
+                        cout << "Day: " << ltm->tm_mday << endl;
+
                         return;
                     }
                     sum += map[i][j];
@@ -919,11 +927,10 @@ void solveMaze(ifstream &fin)
                 {
                     if (map[i][j] < 0)
 
-                    cout << "\033[1;31m "<< map[i][j] <<"\033[0m";
+                        cout << "\033[1;31m " << map[i][j] << "\033[0m";
 
                     else
-                    cout << "\033[1;31m  "<< map[i][j] << "\033[0m";
-
+                        cout << "\033[1;31m  " << map[i][j] << "\033[0m";
                 }
                 else
                 {
