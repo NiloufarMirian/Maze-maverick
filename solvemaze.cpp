@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+
 using namespace std;
 
 bool dfsS(int x, int y, int ROWS, int COLS, int sum, int length, char move, vector<vector<int>> map, vector<vector<char>> &moves, vector<vector<char>> &lead);
@@ -9,6 +10,7 @@ bool isValidMove(int x, int y, int ROWS, int COLS, vector<vector<char>> moves);
 
 int main()
 {
+
     ifstream fin;
     fin.open("Maps/complex.txt");
     string name, level;
@@ -24,6 +26,7 @@ int main()
     string sub;
     while (getline(fin, bucket))
     {
+
         vector<int> row;
         vector<char> move;
         vector<char> lead1;
@@ -51,40 +54,40 @@ int main()
     }
 
     // print map
-        for (int i = 0; i < map.size(); i++)
+    for (int i = 0; i < map.size(); i++)
+    {
+        for (int j = 0; j < map[0].size(); j++)
         {
-            for (int j = 0; j < map[0].size(); j++)
-            {
 
-                if (map[i][j] < 0)
-                    cout << " ";
-                else
-                    cout << "  ";
-                cout << map[i][j];
-            }
-            cout << endl;
-        }
-        // print lead
-        for (int i = 0; i < lead.size(); i++)
-        {
-            for (int j = 0; j < lead[0].size(); j++)
-            {
-                cout << lead[i][j] << " ";
-            }
-            cout << endl;
+            if (map[i][j] < 0)
+                cout << " ";
+            else
+                cout << "  ";
+            cout << map[i][j];
         }
 
-        // print moves
-        for (int i = 0; i < moves.size(); i++)
+        cout << endl;
+    }
+    // print lead
+    for (int i = 0; i < lead.size(); i++)
+    {
+        for (int j = 0; j < lead[0].size(); j++)
         {
-            for (int j = 0; j < moves[0].size(); j++)
-            {
-                cout << moves[i][j] << " ";
-            }
-            cout << endl;
+            cout << lead[i][j] << " ";
         }
+        cout << endl;
+    }
 
-        
+    // print moves
+    for (int i = 0; i < moves.size(); i++)
+    {
+        for (int j = 0; j < moves[0].size(); j++)
+        {
+            cout << moves[i][j] << " ";
+        }
+        cout << endl;
+    }
+    system("cls");
 
     if (dfsS(0, 0, map.size(), map[0].size(), map[map.size() - 1][map[0].size() - 1], pathLength, ' ', map, moves, lead))
     {
@@ -93,13 +96,26 @@ int main()
         {
             for (int j = 0; j < map[0].size(); j++)
             {
+                if (lead[i][j] == '#' && map[i][j] != 0)
+                {
+                    if (map[i][j] < 0)
 
-                if (map[i][j] < 0)
-                    cout << " ";
+                    cout << "\033[1;31m "<< map[i][j] <<"\033[0m";
+
+                    else
+                    cout << "\033[1;31m  "<< map[i][j] << "\033[0m";
+
+                }
                 else
-                    cout << "  ";
-                cout << map[i][j];
+                {
+                    if (map[i][j] < 0)
+                        cout << " ";
+                    else
+                        cout << "  ";
+                    cout << map[i][j];
+                }
             }
+
             cout << endl;
         }
 
@@ -127,7 +143,7 @@ int main()
 
 bool dfsS(int x, int y, int ROWS, int COLS, int sum, int length, char move, vector<vector<int>> map, vector<vector<char>> &moves, vector<vector<char>> &lead)
 {
-    if (x == ROWS - 1 && y == COLS - 1 && sum == map[x][y] && length == 0)
+    if (x == ROWS - 1 && y == COLS - 1 && sum == 0 && length == 0)
     {
         lead[x][y] = '#';
         moves[x][y] = move;
@@ -139,7 +155,7 @@ bool dfsS(int x, int y, int ROWS, int COLS, int sum, int length, char move, vect
         return false;
     }
 
-    if (x == ROWS - 1 && y == COLS - 1 && sum != map[x][y] && length == 0)
+    if (x == ROWS - 1 && y == COLS - 1 && sum != 0 && length == 0)
     {
         return false;
     }
@@ -164,7 +180,7 @@ bool dfsS(int x, int y, int ROWS, int COLS, int sum, int length, char move, vect
     return false;
 }
 
-bool isValidMove(int x, int y, int ROWS, int COLS, vector<vector<char>> moves)
+bool isValidMove(int x, int y, int ROWS, int COLS, vector<vector<char>> lead)
 {
-    return (x >= 0 && x < ROWS && y >= 0 && y < COLS && moves[x][y] != '#');
+    return (x >= 0 && x < ROWS && y >= 0 && y < COLS && lead[x][y] != '#');
 }
