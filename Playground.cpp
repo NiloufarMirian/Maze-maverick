@@ -7,8 +7,37 @@
 #include <algorithm>
 #include <stdlib.h>
 #include <conio.h>
+#include <chrono>
+#include <thread>
 
 using namespace std;
+
+
+//chronometer
+class Stopwatch {
+public:
+    void start() {
+        startTime = std::chrono::high_resolution_clock::now();
+    }
+
+    void stop() {
+        endTime = std::chrono::high_resolution_clock::now();
+    }
+
+    void reset() {
+        startTime = std::chrono::time_point<std::chrono::high_resolution_clock>();
+        endTime = std::chrono::time_point<std::chrono::high_resolution_clock>();
+    }
+
+    double elapsedMilliseconds() const {
+        return std::chrono::duration<double, std::milli>(endTime - startTime).count();
+    }
+
+private:
+    std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
+    std::chrono::time_point<std::chrono::high_resolution_clock> endTime;
+};
+
 
 void printmap(vector<vector<int>> map, vector<vector<char>> lead);
 bool isValidMove(int x, int y, int ROWS, int COLS, vector<vector<char>> lead);
@@ -64,6 +93,8 @@ int main()
     int sum=0;
     sum += map[i][j];
     printmap(map, lead);
+    Stopwatch stopwatch;
+    stopwatch.start();
 
     char ch;
     while (1)
@@ -80,7 +111,10 @@ int main()
                     lead[i][j] = '#';
                     if (i==map.size()-1 && j==map[0].size()-1 && sum==map[i][j])
                     {
-                        cout << "You won!";
+                        cout << "You won!\n";
+                        stopwatch.stop();
+                        cout << "Spent time: " << stopwatch.elapsedMilliseconds()/1000 << " seconds" << std::endl;
+                        
                         return 0;
                     }
                     sum += map[i][j];
@@ -96,7 +130,10 @@ int main()
                     lead[i][j] = '#';
                     if (i==map.size()-1 && j==map[0].size()-1 && sum==map[i][j])
                     {
-                        cout << "You won!";
+                        cout << "You won!\n";
+                        stopwatch.stop();
+                        cout << "Spent time: " << stopwatch.elapsedMilliseconds()/1000 << " seconds" << std::endl;
+                        
                         return 0;
                     }
                     sum += map[i][j];
@@ -112,7 +149,9 @@ int main()
                     lead[i][j] = '#';
                     if (i==map.size()-1 && j==map[0].size()-1 && sum==map[i][j])
                     {
-                        cout << "You won!";
+                        cout << "You won!\n";
+                        stopwatch.stop();
+                        cout << "Spent time: " << stopwatch.elapsedMilliseconds()/1000 << " seconds" << std::endl;
                         return 0;
                     }
                     sum += map[i][j];
@@ -128,7 +167,10 @@ int main()
                     lead[i][j] = '#';
                     if (i==map.size()-1 && j==map[0].size()-1 && sum==map[i][j])
                     {
-                        cout << "You won!";
+                        cout << "You won!\n";
+                        stopwatch.stop();
+                        cout << "Spent time: " << stopwatch.elapsedMilliseconds()/1000 << " seconds" << std::endl;
+                        
                         return 0;
                     }
                     sum += map[i][j];
