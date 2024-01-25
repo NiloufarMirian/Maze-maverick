@@ -12,24 +12,28 @@
 
 using namespace std;
 
-
-//chronometer
-class Stopwatch {
+// chronometer
+class Stopwatch
+{
 public:
-    void start() {
+    void start()
+    {
         startTime = std::chrono::high_resolution_clock::now();
     }
 
-    void stop() {
+    void stop()
+    {
         endTime = std::chrono::high_resolution_clock::now();
     }
 
-    void reset() {
+    void reset()
+    {
         startTime = std::chrono::time_point<std::chrono::high_resolution_clock>();
         endTime = std::chrono::time_point<std::chrono::high_resolution_clock>();
     }
 
-    double elapsedMilliseconds() const {
+    double elapsedMilliseconds() const
+    {
         return std::chrono::duration<double, std::milli>(endTime - startTime).count();
     }
 
@@ -37,7 +41,6 @@ private:
     std::chrono::time_point<std::chrono::high_resolution_clock> startTime;
     std::chrono::time_point<std::chrono::high_resolution_clock> endTime;
 };
-
 
 template <typename T>
 void Swap(T *a, T *b);
@@ -66,7 +69,6 @@ void makeBlock(vector<vector<int>> &map, vector<vector<char>> &lead, int pathLen
 void Playground(ifstream &fin);
 
 void printmap(vector<vector<int>> map, vector<vector<char>> lead);
-
 
 int main()
 {
@@ -141,22 +143,100 @@ int main()
         int command;
         cout << "- 2.1 Choose from Existing Maps\n"
              << "- 2.2 Import a Custom Map\n";
+        cin >> command;
         string name;
-        // temporary address
-        ifstream fin;
-        fin.open("Maps/complex.txt");
-        getline(fin, name);
-        string level;
-        fin >> level;
-        int pathLength;
-        fin >> pathLength;
-        Playground(fin);
+        if (command == 1)
+        {
+            int i = 0;
+            cout << "Choose from mentioned names.\n";
+            WIN32_FIND_DATA findFileData;
+            HANDLE hFind = FindFirstFile("Maps/*", &findFileData);
+            if (hFind != INVALID_HANDLE_VALUE)
+            {
+                do
+                {
+                    i++;
+                    std::cout << findFileData.cFileName << std::endl;
+                } while (FindNextFile(hFind, &findFileData) != 0);
+                FindClose(hFind);
+            }
+            else
+            {
+                std::cerr << "Unable to find files" << std::endl;
+                return 1;
+            }
+            cin >> name;
+            ifstream fin;
+            fin.open("Maps/" + name);
+        }
+        else if (command == 2)
+        {
+            cout << "Enter the adddress.\n";
+            cin >> name;
+            ifstream fin;
+            fin.open(name);
+            getline(fin, name);
+            string level;
+            fin >> level;
+            int pathLength;
+            fin >> pathLength;
+            Playground(fin);
+        }
+        else 
+        {
+            cerr << "Invalid command!\n";
+        }
     }
 
     else if (command == 3)
     {
+        system("cls");
+        int command;
         cout << "- 3.1 Choose from Existing Maps\n"
              << "- 3.2 Import a Custom Map\n";
+        cin >> command;
+        string name;
+        if (command == 1)
+        {
+            int i = 0;
+            cout << "Choose from mentioned names.\n";
+            WIN32_FIND_DATA findFileData;
+            HANDLE hFind = FindFirstFile("Maps/*", &findFileData);
+            if (hFind != INVALID_HANDLE_VALUE)
+            {
+                do
+                {
+                    i++;
+                    std::cout << findFileData.cFileName << std::endl;
+                } while (FindNextFile(hFind, &findFileData) != 0);
+                FindClose(hFind);
+            }
+            else
+            {
+                std::cerr << "Unable to find files" << std::endl;
+                return 1;
+            }
+            cin >> name;
+            ifstream fin;
+            fin.open("Maps/" + name);
+        }
+        else if (command == 2)
+        {
+            cout << "Enter the adddress.\n";
+            cin >> name;
+            ifstream fin;
+            fin.open(name);
+            getline(fin, name);
+            string level;
+            fin >> level;
+            int pathLength;
+            fin >> pathLength;
+            Playground(fin);
+        }
+        else 
+        {
+            cerr << "Invalid command!\n";
+        }
     }
 }
 
