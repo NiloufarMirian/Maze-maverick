@@ -66,8 +66,6 @@ struct games
     string result;
 };
 
-
-
 template <typename T>
 void Swap(T *a, T *b);
 
@@ -106,7 +104,8 @@ int main()
          << "3. Solve a Maze\n"
          << "4. History\n"
          << "5. Leaderboard\n"
-         << "6. Exit\n";
+         << "6. User information\n"
+         << "7. Exit\n";
     cin >> command;
     if (command == 1)
     {
@@ -236,7 +235,7 @@ int main()
             // fout information
             ofstream fout;
             fout.open("Users/" + username + ".txt");
-            fout << user.date.year << " "<<  user.date.month <<" " <<  user.date.day << endl;
+            fout << user.date.year << " " << user.date.month << " " << user.date.day << endl;
             fout << user.games << endl;
             fout << user.time << endl;
             fout << user.wins << endl;
@@ -283,7 +282,7 @@ int main()
             user.date.day = ltm->tm_mday;
             // fout information
             ofstream fout;
-            fout << user.date.year << " "<<  user.date.month <<" " <<  user.date.day << endl;
+            fout << user.date.year << " " << user.date.month << " " << user.date.day << endl;
             fout << user.games << endl;
             fout << user.time << endl;
             fout << user.wins << endl;
@@ -341,6 +340,32 @@ int main()
         else
         {
             cerr << "Invalid command!\n";
+        }
+    }
+    else if (command == 6)
+    {
+        cout << "Enter username\n";
+        string username;
+        cin >> username;
+        ifstream fin;
+        fin.open("Users/" + username + ".txt");
+        information user;
+        if (fin.is_open())
+        {
+            fin >> user.date.year >> user.date.month >> user.date.day;
+            fin >> user.games;
+            fin >> user.time;
+            fin >> user.wins;
+
+            cout << "Number of the games: "<< user.games << endl;
+            cout << "Number of the wins: " << user.wins << endl;
+            cout << "Total game time: " << user.time << endl;
+            cout << "Date: "<< user.date.year << " " << user.date.month << " " << user.date.day << endl;
+
+        }
+        else
+        {
+            cerr << "Invalid username!";
         }
     }
 }
