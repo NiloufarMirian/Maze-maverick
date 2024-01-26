@@ -381,7 +381,84 @@ int main()
     else if (command == 4)
     {
         vector<games> history;
+        games bucket;
+        ifstream fin;
+        string s;
+        int line = 0;
+        while (getline(fin, s))
+        {
+            if (line % 5 == 0)
+            {
+                for (int i = 0; i < s.size(); i++)
+                {
+                    if (s[i] != ' ' && (int(s[i]) > 47 && int(s[i]) < 58))
+                    {
+                        string sub = s.substr(i, s.find(' ', i) - i);
+                        bucket.date.year = stoi(sub);
+                        i += sub.size() - 1;
 
+                        sub = s.substr(i, s.find(' ', i) - i);
+                        bucket.date.month = stoi(sub);
+                        i += sub.size() - 1;
+
+                        sub = s.substr(i, s.find(' ', i) - i);
+                        bucket.date.day = stoi(sub);
+                        i += sub.size() - 1;
+                    }
+                }
+            }
+
+            else if (line % 5 == 1)
+            {
+                bucket.mapname = s;
+            }
+
+            else if (line % 5 == 2)
+            {
+                bucket.result = s;
+            }
+
+            else if (line % 5 == 3)
+            {
+                bucket.time = stoi(s);
+            }
+
+            else if (line % 5 == 4)
+            {
+                bucket.username = s;
+            }
+
+            history.push_back(bucket);
+            line++;
+        }
+
+        if (line == 0)
+            cerr << "A problem has happend in openning the file!";
+
+        if (history.size() >= 10)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                bucket = history[history.size() - i - 1];
+                cout << bucket.date.year << " " << bucket.date.month << " " << bucket.date.day <, endl;
+                cout << bucket.mapname << endl;
+                cout << bucket.result << endl;
+                cout << bucket.time << endl;
+                cout << bucket.username << endl;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < history.size(); i++)
+            {
+                bucket = history[history.size() - i - 1];
+                cout << bucket.date.year << " " << bucket.date.month << " " << bucket.date.day <, endl;
+                cout << bucket.mapname << endl;
+                cout << bucket.result << endl;
+                cout << bucket.time << endl;
+                cout << bucket.username << endl;
+            }
+        }
     }
     else if (command == 6)
     {
