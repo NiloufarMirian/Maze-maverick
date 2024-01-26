@@ -42,6 +42,13 @@ private:
     std::chrono::time_point<std::chrono::high_resolution_clock> endTime;
 };
 
+struct Date
+{
+    int year;
+    int month;
+    int day;
+};
+
 struct information
 {
     int games = 0;
@@ -59,12 +66,7 @@ struct games
     string result;
 };
 
-struct Date
-{
-    int year;
-    int month;
-    int day;
-};
+
 
 template <typename T>
 void Swap(T *a, T *b);
@@ -205,13 +207,13 @@ int main()
             string result = "lost";
             int Time;
             Playground(fin, result, Time);
+            fin.close();
 
             // // user information
             cout << "Enter username.\n";
             string username;
             cin >> username;
             // fin >> informations
-            fin.close();
             fin.open("Users/" + username + ".txt");
             information user;
             if (fin.is_open())
@@ -233,6 +235,7 @@ int main()
             user.date.day = ltm->tm_mday;
             // fout information
             ofstream fout;
+            fout.open("Users/" + username + ".txt");
             fout << user.date.year << " "<<  user.date.month <<" " <<  user.date.day << endl;
             fout << user.games << endl;
             fout << user.time << endl;
