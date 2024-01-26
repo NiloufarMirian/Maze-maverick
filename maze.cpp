@@ -239,7 +239,25 @@ int main()
             fout << user.games << endl;
             fout << user.time << endl;
             fout << user.wins << endl;
+            fout.close();
+
+            // history
+            games history;
+            history.date.day = ltm->tm_mday;
+            history.date.month = 1 + ltm->tm_mon;
+            history.date.year = 1900 + ltm->tm_year;
+            history.mapname = name;
+            history.result = result;
+            history.time = Time;
+            history.username = username;
+            fout.open("Stats/history.txt");
+            fout << history.date.year << " " << history.date.month << " " << history.date.day << endl;
+            fout << history.mapname << endl;
+            fout << history.result << endl;
+            fout << history.time << endl;
+            fout << history.username << endl;
         }
+
         else if (command == 2)
         {
             cout << "Enter the adddress.\n";
@@ -286,6 +304,22 @@ int main()
             fout << user.games << endl;
             fout << user.time << endl;
             fout << user.wins << endl;
+
+            // history
+            games history;
+            history.date.day = ltm->tm_mday;
+            history.date.month = 1 + ltm->tm_mon;
+            history.date.year = 1900 + ltm->tm_year;
+            history.mapname = name;
+            history.result = result;
+            history.time = Time;
+            history.username = username;
+            fout.open("Stats/history.txt");
+            fout << history.date.year << " " << history.date.month << " " << history.date.day << endl;
+            fout << history.mapname << endl;
+            fout << history.result << endl;
+            fout << history.time << endl;
+            fout << history.username << endl;
         }
         else
         {
@@ -357,11 +391,10 @@ int main()
             fin >> user.time;
             fin >> user.wins;
 
-            cout << "Number of the games: "<< user.games << endl;
+            cout << "Number of the games: " << user.games << endl;
             cout << "Number of the wins: " << user.wins << endl;
             cout << "Total game time: " << user.time << endl;
-            cout << "Date: "<< user.date.year << " " << user.date.month << " " << user.date.day << endl;
-
+            cout << "Date: " << user.date.year << " " << user.date.month << " " << user.date.day << endl;
         }
         else
         {
