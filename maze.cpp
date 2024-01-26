@@ -113,9 +113,8 @@ int main()
         string name;
         cout << "Enter name" << endl;
         getline(cin, name);
-        name = "Maps/" + name + ".txt";
         ofstream fout;
-        fout.open(name);
+        fout.open("Maps/" + name);
         fout << name + ".txt\n";
 
         cout << "- 1.1 Easy\n"
@@ -159,7 +158,6 @@ int main()
             int length;
             cin >> length;
             fout << "Hard\n";
-            fout << length << "\n";
             complexmap(fout, row, column, minblock, maxblock, minValue, maxValue, length);
         }
     }
@@ -383,6 +381,7 @@ int main()
         vector<games> history;
         games bucket;
         ifstream fin;
+        fin.open("Stats/history.txt");
         string s;
         int line = 0;
         while (getline(fin, s))
@@ -395,15 +394,15 @@ int main()
                     {
                         string sub = s.substr(i, s.find(' ', i) - i);
                         bucket.date.year = stoi(sub);
-                        i += sub.size() - 1;
+                        i += sub.size() + 1;
 
                         sub = s.substr(i, s.find(' ', i) - i);
                         bucket.date.month = stoi(sub);
-                        i += sub.size() - 1;
+                        i += sub.size() + 1;
 
                         sub = s.substr(i, s.find(' ', i) - i);
                         bucket.date.day = stoi(sub);
-                        i += sub.size() - 1;
+                        i += sub.size() + 1;
                     }
                 }
             }
@@ -428,7 +427,8 @@ int main()
                 bucket.username = s;
             }
 
-            history.push_back(bucket);
+            if (line % 5 == 4)
+                history.push_back(bucket);
             line++;
         }
 
@@ -440,7 +440,7 @@ int main()
             for (int i = 0; i < 10; i++)
             {
                 bucket = history[history.size() - i - 1];
-                cout << bucket.date.year << " " << bucket.date.month << " " << bucket.date.day <, endl;
+                cout << bucket.date.year << " " << bucket.date.month << " " << bucket.date.day << endl;
                 cout << bucket.mapname << endl;
                 cout << bucket.result << endl;
                 cout << bucket.time << endl;
@@ -452,7 +452,7 @@ int main()
             for (int i = 0; i < history.size(); i++)
             {
                 bucket = history[history.size() - i - 1];
-                cout << bucket.date.year << " " << bucket.date.month << " " << bucket.date.day <, endl;
+                cout << bucket.date.year << " " << bucket.date.month << " " << bucket.date.day << endl;
                 cout << bucket.mapname << endl;
                 cout << bucket.result << endl;
                 cout << bucket.time << endl;
@@ -632,6 +632,7 @@ void complexmap(ofstream &fout, int row, int column, int minblock, int maxblock,
     assignmentMap(lead, map, row, column, minValue, maxValue);
 
     // print map
+    fout << length << endl;
     for (int i = 0; i < row; i++)
     {
         for (int j = 0; j < column; j++)
