@@ -42,6 +42,30 @@ private:
     std::chrono::time_point<std::chrono::high_resolution_clock> endTime;
 };
 
+struct information
+{
+    int games = 0;
+    int wins = 0;
+    Date date;
+    int time = 0;
+};
+
+struct games
+{
+    Date date;
+    string username;
+    string mapname;
+    int time = 0;
+    string result;
+};
+
+struct Date
+{
+    int year;
+    int month;
+    int day;
+};
+
 template <typename T>
 void Swap(T *a, T *b);
 
@@ -66,7 +90,7 @@ vector<char> moveArray(vector<vector<char>> &moves);
 
 void makeBlock(vector<vector<int>> &map, vector<vector<char>> &lead, int pathLength, int minblock, int maxblock, int row, int column);
 
-void Playground(ifstream &fin);
+void Playground(ifstream &fin, string result, int time);
 
 void printmap(vector<vector<int>> map, vector<vector<char>> lead);
 
@@ -139,6 +163,7 @@ int main()
         }
     }
 
+    // Playground
     else if (command == 2)
     {
         system("cls");
@@ -167,6 +192,7 @@ int main()
                 std::cerr << "Unable to find files" << std::endl;
                 return 1;
             }
+
             cin >> name;
             ifstream fin;
             fin.open("Maps/" + name);
@@ -175,7 +201,42 @@ int main()
             fin >> level;
             int pathLength;
             fin >> pathLength;
-            Playground(fin);
+
+            string result = "lost";
+            int Time;
+            Playground(fin, result, Time);
+
+            // // user information
+            cout << "Enter username.\n";
+            string username;
+            cin >> username;
+            // fin >> informations
+            fin.close();
+            fin.open("Users/" + username + ".txt");
+            information user;
+            if (fin.is_open())
+            {
+                fin >> user.date.year >> user.date.month >> user.date.day;
+                fin >> user.games;
+                fin >> user.time;
+                fin >> user.wins;
+            }
+            // update informations
+            if (result == "win")
+                user.wins++;
+            user.games++;
+            user.time += Time;
+            time_t now = time(0);
+            tm *ltm = localtime(&now);
+            user.date.year = 1900 + ltm->tm_year;
+            user.date.month = 1 + ltm->tm_mon;
+            user.date.day = ltm->tm_mday;
+            // fout information
+            ofstream fout;
+            fout << user.date.year << " "<<  user.date.month <<" " <<  user.date.day << endl;
+            fout << user.games << endl;
+            fout << user.time << endl;
+            fout << user.wins << endl;
         }
         else if (command == 2)
         {
@@ -188,7 +249,41 @@ int main()
             fin >> level;
             int pathLength;
             fin >> pathLength;
-            Playground(fin);
+            string result = "lost";
+            int Time;
+            Playground(fin, result, Time);
+
+            // // user information
+            cout << "Enter username.\n";
+            string username;
+            cin >> username;
+            // fin >> informations
+            fin.close();
+            fin.open("Users/" + username + ".txt");
+            information user;
+            if (fin.is_open())
+            {
+                fin >> user.date.year >> user.date.month >> user.date.day;
+                fin >> user.games;
+                fin >> user.time;
+                fin >> user.wins;
+            }
+            // update informations
+            if (result == "win")
+                user.wins++;
+            user.games++;
+            user.time += Time;
+            time_t now = time(0);
+            tm *ltm = localtime(&now);
+            user.date.year = 1900 + ltm->tm_year;
+            user.date.month = 1 + ltm->tm_mon;
+            user.date.day = ltm->tm_mday;
+            // fout information
+            ofstream fout;
+            fout << user.date.year << " "<<  user.date.month <<" " <<  user.date.day << endl;
+            fout << user.games << endl;
+            fout << user.time << endl;
+            fout << user.wins << endl;
         }
         else
         {
@@ -196,6 +291,7 @@ int main()
         }
     }
 
+    // Solve a Maze
     else if (command == 3)
     {
         system("cls");
@@ -237,7 +333,6 @@ int main()
             ifstream fin;
             fin.open(name);
             getline(fin, name);
-
             solveMaze(fin);
         }
         else
@@ -665,7 +760,7 @@ void assignmentMap(vector<vector<char>> &lead, vector<vector<int>> &map, int row
     }
 }
 
-void Playground(ifstream &fin)
+void Playground(ifstream &fin, string result, int time)
 {
     vector<vector<int>> map;
     vector<vector<char>> lead;
@@ -721,17 +816,9 @@ void Playground(ifstream &fin)
                     {
                         cout << "You won!\n";
                         stopwatch.stop();
-                        cout << "Spent time: " << stopwatch.elapsedMilliseconds() / 1000 << " seconds" << std::endl;
-
-                        //date
-                        time_t now = time(0);
-                        tm *ltm = localtime(&now);
-
-                        // print various components of tm structure.
-                        cout << "Year:" << 1900 + ltm->tm_year << endl;
-                        cout << "Month: " << 1 + ltm->tm_mon << endl;
-                        cout << "Day: " << ltm->tm_mday << endl;
-
+                        time = stopwatch.elapsedMilliseconds() / 1000;
+                        cout << "Spent time: " << time << " seconds" << std::endl;
+                        result = "win";
                         return;
                     }
                     sum += map[i][j];
@@ -749,8 +836,9 @@ void Playground(ifstream &fin)
                     {
                         cout << "You won!\n";
                         stopwatch.stop();
-                        cout << "Spent time: " << stopwatch.elapsedMilliseconds() / 1000 << " seconds" << std::endl;
-
+                        time = stopwatch.elapsedMilliseconds() / 1000;
+                        cout << "Spent time: " << time << " seconds" << std::endl;
+                        result = "win";
                         return;
                     }
                     sum += map[i][j];
@@ -768,7 +856,9 @@ void Playground(ifstream &fin)
                     {
                         cout << "You won!\n";
                         stopwatch.stop();
-                        cout << "Spent time: " << stopwatch.elapsedMilliseconds() / 1000 << " seconds" << std::endl;
+                        time = stopwatch.elapsedMilliseconds() / 1000;
+                        cout << "Spent time: " << time << " seconds" << std::endl;
+                        result = "win";
                         return;
                     }
                     sum += map[i][j];
@@ -777,6 +867,7 @@ void Playground(ifstream &fin)
                 else
                     cout << "Invalid move!";
                 break;
+
             case 77: // Right
                 if (isValidMove(i, j + 1, map.size(), map[0].size(), lead))
                 {
@@ -786,8 +877,9 @@ void Playground(ifstream &fin)
                     {
                         cout << "You won!\n";
                         stopwatch.stop();
-                        cout << "Spent time: " << stopwatch.elapsedMilliseconds() / 1000 << " seconds" << std::endl;
-
+                        time = stopwatch.elapsedMilliseconds() / 1000;
+                        cout << "Spent time: " << time << " seconds" << std::endl;
+                        result = "win";
                         return;
                     }
                     sum += map[i][j];
@@ -797,6 +889,7 @@ void Playground(ifstream &fin)
                     cout << "Invalid move!";
                 break;
             case 13: // enter
+                time = stopwatch.elapsedMilliseconds() / 1000;
                 return;
             }
         }
