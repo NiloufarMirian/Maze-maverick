@@ -90,7 +90,7 @@ vector<char> moveArray(vector<vector<char>> &moves);
 
 void makeBlock(vector<vector<int>> &map, vector<vector<char>> &lead, int pathLength, int minblock, int maxblock, int row, int column);
 
-void Playground(ifstream &fin, string result, int time);
+void Playground(ifstream &fin, string &result, int &time);
 
 void printmap(vector<vector<int>> map, vector<vector<char>> lead);
 
@@ -375,6 +375,13 @@ int main()
         {
             cerr << "Invalid command!\n";
         }
+    }
+
+    // History
+    else if (command == 4)
+    {
+        vector<games> history;
+
     }
     else if (command == 6)
     {
@@ -821,7 +828,7 @@ void assignmentMap(vector<vector<char>> &lead, vector<vector<int>> &map, int row
     }
 }
 
-void Playground(ifstream &fin, string result, int time)
+void Playground(ifstream &fin, string &result, int &time)
 {
     vector<vector<int>> map;
     vector<vector<char>> lead;
