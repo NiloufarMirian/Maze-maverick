@@ -9,9 +9,6 @@
 #include <conio.h>
 #include <chrono>
 #include <thread>
-#include <iomanip>
-
-
 
 using namespace std;
 
@@ -102,7 +99,6 @@ void solveMaze(ifstream &fin);
 int main()
 {
     srand(time(0));
-
     int command;
     cout << "1. Create a New Map\n"
          << "2. Playground\n"
@@ -112,8 +108,6 @@ int main()
          << "6. User information\n"
          << "7. Exit\n";
     cin >> command;
-
-    // Create a New Map
     if (command == 1)
     {
         system("cls");
@@ -122,21 +116,24 @@ int main()
         cin >> name;
         ofstream fout;
         fout.open("Maps/" + name + ".txt");
-        fout << name + ".txt" "\n";
+        fout << name + ".txt\n";
+
         cout << "- 1.1 Easy\n"
              << "- 1.2 Hard\n";
         cin >> command;
         cout << "Enter row & column of map" << endl;
-        int row, column;
-        cin >> row >> column;
         if (command == 1)
         {
+            int row, column;
+            cin >> row >> column;
             fout << "Easy\n";
             fout << row + column - 2 << "\n";
             simplemap(fout, row, column);
         }
         if (command == 2)
         {
+            int row, column;
+            cin >> row >> column;
             cout << "Enter range of blocks" << endl;
             int minblock, maxblock;
             cin >> minblock >> maxblock;
@@ -177,6 +174,7 @@ int main()
         string name;
         if (command == 1)
         {
+            int i = 0;
             cout << "Choose from mentioned names.\n";
             WIN32_FIND_DATA findFileData;
             HANDLE hFind = FindFirstFile("Maps/*", &findFileData);
@@ -184,6 +182,7 @@ int main()
             {
                 do
                 {
+                    i++;
                     std::cout << findFileData.cFileName << std::endl;
                 } while (FindNextFile(hFind, &findFileData) != 0);
                 FindClose(hFind);
@@ -353,7 +352,7 @@ int main()
             }
             else
             {
-                std::cerr << "Unable to find files!\ncreate a map first.\n" << std::endl;
+                std::cerr << "Unable to find files" << std::endl;
                 return 1;
             }
             cin >> name;
@@ -462,6 +461,14 @@ int main()
             }
         }
     }
+
+    //leaderboard
+    else if (command == 5)
+    {
+        
+    }
+
+    // User Information
     else if (command == 6)
     {
         cout << "Enter username\n";
@@ -486,11 +493,6 @@ int main()
         {
             cerr << "Invalid username!";
         }
-    }
-
-    else if (command == 7)
-    {
-        return 0;
     }
 }
 
@@ -562,7 +564,12 @@ void simplemap(ofstream &fout, int row, int column)
     {
         for (int j = 0; j < column; j++)
         {
-            fout << left << setw(5) << map[i][j];
+
+            if (map[i][j] < 0)
+                fout << " ";
+            else
+                fout << "  ";
+            fout << map[i][j];
         }
         fout << endl;
     }
@@ -639,7 +646,12 @@ void complexmap(ofstream &fout, int row, int column, int minblock, int maxblock,
     {
         for (int j = 0; j < column; j++)
         {
-            fout << left << setw(5) << map[i][j];
+
+            if (map[i][j] < 0)
+                fout << " ";
+            else
+                fout << "  ";
+            fout << map[i][j];
         }
         fout << endl;
     }
@@ -696,9 +708,8 @@ bool dfs(int x, int y, int ROWS, int COLS, int length, char move, vector<vector<
     }
     if (!(x == ROWS - 1 && y == COLS - 1) && length == 0)
     {
-        map[x][y] = 0;
         return false;
-
+        map[x][y] = 0;
     }
 
     if (!isValidMove(x, y, ROWS, COLS, map))
@@ -793,6 +804,7 @@ bool isValidMove(int x, int y, int ROWS, int COLS, const vector<vector<int>> &ma
 template <typename T>
 void FY(vector<T> a)
 {
+    srand(time(0));
     int index;
     for (int i = a.size() - 1; i >= 1; i--)
     {
@@ -869,6 +881,7 @@ void assignmentPath(vector<vector<char>> &lead, vector<vector<int>> &map, vector
 
 void assignmentMap(vector<vector<char>> &lead, vector<vector<int>> &map, int row, int column, int minValue, int maxValue)
 {
+    srand(time(0));
     for (int i = 0; i < row; i++)
     {
         for (int j = 0; j < column; j++)
@@ -1056,8 +1069,11 @@ void printmap(vector<vector<int>> map, vector<vector<char>> lead)
             }
             else
             {
-                
-                cout << left << setw(5) << map[i][j];
+                if (map[i][j] < 0)
+                    cout << " ";
+                else
+                    cout << "  ";
+                cout << map[i][j];
             }
         }
 
@@ -1117,7 +1133,11 @@ void solveMaze(ifstream &fin)
         for (int j = 0; j < map[0].size(); j++)
         {
 
-            cout << left << setw(5) << map[i][j];
+            if (map[i][j] < 0)
+                cout << " ";
+            else
+                cout << "  ";
+            cout << map[i][j];
         }
 
         cout << endl;
