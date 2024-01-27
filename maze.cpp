@@ -51,6 +51,7 @@ struct Date
 
 struct information
 {
+    string name;
     int games = 0;
     int wins = 0;
     Date date;
@@ -95,6 +96,8 @@ void Playground(ifstream &fin, string &result, int &time);
 void printmap(vector<vector<int>> map, vector<vector<char>> lead);
 
 void solveMaze(ifstream &fin);
+
+void Leaderboard(vector<information> leaderboard);
 
 int main()
 {
@@ -462,9 +465,95 @@ int main()
         }
     }
 
-    //leaderboard
+    // leaderboard
     else if (command == 5)
     {
+        vector<games> history;
+        games bucket;
+        ifstream fin;
+        fin.open("Stats/history.txt");
+        string s;
+        int line = 0;
+        while (getline(fin, s))
+        {
+            if (line % 5 == 0)
+            {
+                for (int i = 0; i < s.size(); i++)
+                {
+                    if (s[i] != ' ' && (int(s[i]) > 47 && int(s[i]) < 58))
+                    {
+                        string sub = s.substr(i, s.find(' ', i) - i);
+                        bucket.date.year = stoi(sub);
+                        i += sub.size() + 1;
+
+                        sub = s.substr(i, s.find(' ', i) - i);
+                        bucket.date.month = stoi(sub);
+                        i += sub.size() + 1;
+
+                        sub = s.substr(i, s.find(' ', i) - i);
+                        bucket.date.day = stoi(sub);
+                        i += sub.size() + 1;
+                    }
+                }
+            }
+
+            else if (line % 5 == 1)
+            {
+                bucket.mapname = s;
+            }
+
+            else if (line % 5 == 2)
+            {
+                bucket.result = s;
+            }
+
+            else if (line % 5 == 3)
+            {
+                bucket.time = stoi(s);
+            }
+
+            else if (line % 5 == 4)
+            {
+                bucket.username = s;
+            }
+
+            if (line % 5 == 4)
+                history.push_back(bucket);
+            line++;
+        }
+
+        if (line == 0)
+            cerr << "A problem has happend in openning the file!";
+
+        string s;
+        vector<information> leaderboard;
+        information leader;
+        int b = 0;
+        for (int i = 0; i < history.size(); i++)
+        {
+            b = 0;
+            s = history[i].username;
+            if (history[i].result == "win")
+            {
+                for (int j = 0; j < leaderboard.size(); j++)
+                {
+                    if (s == leaderboard[j].name)
+                    {
+                        b = 1;
+                        leaderboard[j].wins++;
+                        leaderboard[j].time += history[i].time;
+                    }
+                }
+                if (!b)
+                {
+                    leader.name = s;
+                    leader.wins++;
+                    leader.time += history[i].time;
+                    leaderboard.push_back(leader);
+                }
+            }
+        }
+        Leaderboard(leaderboard);
         
     }
 
@@ -1216,4 +1305,35 @@ void solveMaze(ifstream &fin)
     {
         cout << "Not path found!";
     }
+}
+
+void Leaderboard(vector<information> leaderboard)
+{
+    for (int k = 0; k < 3; k++)
+        {
+            string s;
+            int max = 0;
+            int time = 0;
+            for (int i = 0; i < leaderboard.size(); i++)
+            {
+                if (max < leaderboard[i].wins)
+                {
+                    s = leaderboard[i].name;
+                    time = leaderboard[i].time;
+                }
+
+                if (max == leaderboard[i].wins && leaderboard[i].time < time)
+                {
+                    s = leaderboard[i].name;
+                    time = leaderboard[i].time;
+                }
+            }
+
+            cout << s << endl;
+            for (int i = 0; i < leaderboard.size(); i++)
+            {
+                if (leaderboard[i].name == s)
+                    leaderboard[i].wins = 0;
+            }
+        }
 }
